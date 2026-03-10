@@ -92,29 +92,31 @@ Route::middleware(['auth'])->group(function () {
 use Illuminate\Support\Facades\DB;
 
 Route::get('/cek-data', function () {
-    // Mengambil data asli dari database Aiven
+    // 1. Perintah untuk mengambil data asli dari database
     $parts = DB::table('spareparts')->get(); 
 
-    $html = "<html><head><link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css'></head><body class='p-5'>
+    $html = "<html><head><title>Data Sparepart Heri Motor</title>
+             <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css'>
+             </head><body class='p-5'>
              <div class='container'>
                  <h2 class='mb-4 text-center'>Daftar Persediaan Sparepart - Heri Motor</h2>
                  <table class='table table-bordered table-striped'>
                     <thead class='table-dark text-center'>
                         <tr>
-                            <th>Kode</th><th>Nama Barang</th><th>Merk</th><th>Kategori</th><th>Stok</th><th>Harga</th>
+                            <th>Kode</th><th>Nama Barang</th><th>Stok</th><th>Harga</th><th>Merk</th><th>Kategori</th>
                         </tr>
                     </thead>
                     <tbody>";
 
-    // Bagian ini yang membuat data otomatis tampil satu per satu
+    // 2. Perulangan (Looping) untuk menampilkan setiap data dari HeidiSQL
     foreach ($parts as $p) {
         $html .= "<tr>
                     <td>{$p->kode_barang}</td>
                     <td>{$p->nama_barang}</td>
-                    <td>{$p->merk}</td>
-                    <td>{$p->kategori}</td>
                     <td class='text-center'>{$p->stok}</td>
                     <td>Rp " . number_format($p->harga, 0, ',', '.') . "</td>
+                    <td>{$p->merk}</td>
+                    <td>{$p->kategori}</td>
                   </tr>";
     }
 
