@@ -92,11 +92,38 @@ Route::middleware(['auth'])->group(function () {
 use Illuminate\Support\Facades\DB;
 
 Route::get('/cek-data', function () {
-    try {
-        // Pastikan 'spareparts' adalah nama tabel yang ada di database Aiven Anda
-        $data = DB::table('spareparts')->get(); 
-        return response()->json($data);
-    } catch (\Exception $e) {
-        return "Gagal ambil data: " . $e->getMessage();
+    // Mengambil semua data spareparts dari Aiven
+    $parts = DB::table('spareparts')->get();
+    
+    $html = "<html><head><title>Data Sparepart Heri Motor</title>
+             <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css'>
+             </head><body class='p-5'>
+             <div class='container-fluid'>
+                 <h2 class='mb-4 text-center'>Daftar Persediaan Sparepart - Heri Motor</h2>
+                 <table class='table table-striped table-bordered mt-4'>
+                    <thead class='table-dark text-center'>
+                        <tr>
+                            <th>Kode</th>
+                            <th>Nama Barang</th>
+                            <th>Merk</th>
+                            <th>Kategori</th>
+                            <th>Stok</th>
+                            <th>Harga</th>
+                        </tr>
+                    </thead>
+                    <tbody>";
+
+    foreach ($parts as $p) {
+        $html .= "<tr>
+                    <td class='text-center'>{$p->kode_barang}</td>
+                    <td>{$p->nama_barang}</td>
+                    <td>{$p->merk}</td>
+                    <td>{$p->kategori}</td>
+                    <td class='text-center'>{$p->stok}</td>
+                    <td class='text-end'>Rp " . number_format($p->harga, 0, ',', '.') . "</td>
+                  </tr>";
     }
+
+    $html .= "</tbody></table></div></body></html>";
+    return $html;
 });
