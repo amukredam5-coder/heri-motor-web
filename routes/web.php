@@ -89,41 +89,30 @@ Route::middleware(['auth'])->group(function () {
     // Route ini menampilkan katalog yang ada di index.blade.php Anda
     Route::get('/inventory', [SparepartController::class, 'index'])->name('sparepart.index');
 });
-use Illuminate\Support\Facades\DB;
-
 Route::get('/cek-data', function () {
-    // Mengambil semua data spareparts dari Aiven
-    $parts = DB::table('spareparts')->get();
-    
-    $html = "<html><head><title>Data Sparepart Heri Motor</title>
+    // Kita buat tampilan HTML yang hanya berisi baris judul (header)
+    $html = "<html><head><title>Struktur Tabel Heri Motor</title>
              <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css'>
              </head><body class='p-5'>
-             <div class='container-fluid'>
-                 <h2 class='mb-4 text-center'>Daftar Persediaan Sparepart - Heri Motor</h2>
-                 <table class='table table-striped table-bordered mt-4'>
+             <div class='container'>
+                 <h2 class='mb-4'>Variabel Tabel Sparepart</h2>
+                 <table class='table table-bordered'>
                     <thead class='table-dark text-center'>
                         <tr>
-                            <th>Kode</th>
-                            <th>Nama Barang</th>
-                            <th>Merk</th>
-                            <th>Kategori</th>
-                            <th>Stok</th>
-                            <th>Harga</th>
+                            <th>kode_barang</th>
+                            <th>nama_barang</th>
+                            <th>stok</th>
+                            <th>harga</th>
+                            <th>merk</th>
+                            <th>kategori</th>
                         </tr>
                     </thead>
-                    <tbody>";
+                    <tbody>
+                        </tbody>
+                 </table>
+                 <p class='text-muted mt-3'>Menampilkan struktur variabel sesuai database phpMyAdmin.</p>
+             </div>
+             </body></html>";
 
-    foreach ($parts as $p) {
-        $html .= "<tr>
-                    <td class='text-center'>{$p->kode_barang}</td>
-                    <td>{$p->nama_barang}</td>
-                    <td>{$p->merk}</td>
-                    <td>{$p->kategori}</td>
-                    <td class='text-center'>{$p->stok}</td>
-                    <td class='text-end'>Rp " . number_format($p->harga, 0, ',', '.') . "</td>
-                  </tr>";
-    }
-
-    $html .= "</tbody></table></div></body></html>";
     return $html;
 });
