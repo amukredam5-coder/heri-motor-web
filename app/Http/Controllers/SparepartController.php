@@ -8,21 +8,20 @@ use Illuminate\Support\Facades\File;
 
 class SparepartController extends Controller
 {
+    // --- FUNGSI UNTUK DASHBOARD WEB ---
+
     public function index(Request $request)
     {
         $query = Sparepart::query();
 
-        // Filter berdasarkan Merk Kendaraan (Honda, Yamaha, dll)
         if ($request->filled('merk')) {
             $query->where('merk', $request->merk);
         }
 
-        // Filter berdasarkan Kategori Part (Shockbreaker, Blok Mesin, dll)
         if ($request->filled('kategori')) {
             $query->where('kategori', $request->kategori);
         }
 
-        // Pencarian Nama/Kode Barang
         if ($request->filled('search')) {
             $query->where(function($q) use ($request) {
                 $q->where('nama_barang', 'like', '%' . $request->search . '%')
@@ -50,13 +49,12 @@ class SparepartController extends Controller
             'kategori'    => 'required',
         ]);
 
-        // Proteksi jika file tidak ada
         if ($request->hasFile('foto')) {
             $file = $request->file('foto');
             $namaFoto = time() . "_" . str_replace(' ', '_', $file->getClientOriginalName());
             $file->move(public_path('images'), $namaFoto);
         } else {
-            return back()->withErrors(['foto' => 'Gagal mengunggah foto. Pastikan form memiliki enctype="multipart/form-data"']);
+            return back()->withErrors(['foto' => 'Gagal mengunggah foto.']);
         }
 
         Sparepart::create([
@@ -97,9 +95,7 @@ class SparepartController extends Controller
             'kategori'    => $request->kategori,
         ];
 
-        // Jika user mengunggah foto baru saat edit
         if ($request->hasFile('foto')) {
-            // Hapus foto lama jika ada
             if ($item->foto && File::exists(public_path('images/' . $item->foto))) {
                 File::delete(public_path('images/' . $item->foto));
             }
@@ -111,32 +107,53 @@ class SparepartController extends Controller
         }
 
         $item->update($data);
-
-        return redirect()->route('sparepart.index')->with('success', 'Data berhasil diperbarui!');
+        return redirect()->route('sparepart.index')->with('success', 'Data diperbarui!');
     }
 
     public function destroy($id) 
     {
         $item = Sparepart::findOrFail($id);
-        
-        // Hapus file fisik foto dari folder images agar tidak membebani storage
         if ($item->foto && File::exists(public_path('images/' . $item->foto))) {
             File::delete(public_path('images/' . $item->foto));
         }
-
         $item->delete();
         return back()->with('success', 'Item berhasil dihapus');
     }
 
-    public function cetakLabel($id)
+    // --- FUNGSI KHUSUS API FLUTTER (DITAMBAHKAN) ---
+
+    /**
+     * Mengambil semua data untuk Flutter (GET)
+     */
+    public function getApiData()
     {
-        $sparepart = Sparepart::findOrFail($id);
-        return view('cetak_label', compact('sparepart'));
+        // Mengambil data langsung dari Aiven Cloud
+        return response()->json(Sparepart::all(), 200);
     }
 
-    public function resellerIndex()
+    /**
+     * Menambah data baru dari Flutter (POST)
+     */
+    public function storeApiData(Request $request)
     {
-        $barangs = Sparepart::all(); 
-        return view('reseller_dashboard', compact('barangs'));
+        try {
+            $data = Sparepart::create([
+                'kode_barang' => 'HM-' . rand(100, 999),
+                'nama_barang' => $request->nama_barang,
+                'stok'        => $request->stok,
+                'harga'       => $request->harga,
+                'merk'        => $request->merk,
+                'kategori'    => $request->kategori,
+                'foto'        => 'default.jpg', // Default sementara untuk API
+            ]);
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Data masuk ke database Aiven!',
+                'data' => $data
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 }
