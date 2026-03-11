@@ -3,12 +3,10 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SparepartController;
 
-// 1. Ambil data (GET) - ini sudah ada di gambar kamu
+// RUTE INI BEBAS DIAKSES SIAPA SAJA (TERMASUK FLUTTER)
 Route::get('/spareparts', [SparepartController::class, 'getApiData']);
+
+// Rute tes koneksi (opsional)
 Route::get('/tes-koneksi', function() {
-    return response()->json([
-        'status' => 'Berhasil',
-        'pesan' => 'API Heri Motor sudah Online!',
-        'data' => 'Siap digunakan untuk Flutter'
-    ]);
+    return response()->json(['pesan' => 'API Berhasil Terkoneksi!']);
 });
