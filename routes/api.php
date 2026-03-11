@@ -15,7 +15,7 @@ Route::get('/spareparts', [SparepartController::class, 'getApiData']);
 
 // Rute tes untuk memastikan jembatan Vercel aktif
 Route::get('/tes-koneksi', function() {
-    return response()->json(['pesan' => 'API Heri Motor Berhasil Diakses!']);
+    return response()->json(['pesan' => 'API Heri Motor Status: ONLINE!']);
 });
 
 
