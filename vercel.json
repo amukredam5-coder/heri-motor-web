@@ -1,12 +1,12 @@
 {
     "version": 2,
-    "framework": "laravel",
     "functions": {
         "api/index.php": { "runtime": "vercel-php@0.7.1" }
     },
     "routes": [
         {
-            "handle": "filesystem"
+            "src": "/api/(.*)",
+            "dest": "/api/index.php"
         },
         {
             "src": "/(.*)",
