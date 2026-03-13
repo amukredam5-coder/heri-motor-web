@@ -4,17 +4,7 @@
     "api/index.php": { "runtime": "vercel-php@0.7.1" }
   },
   "routes": [
-    {
-      "src": "/api/tes-koneksi",
-      "dest": "/api/index.php"
-    },
-    {
-      "src": "/api/spareparts",
-      "dest": "/api/index.php"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/api/index.php"
-    }
+    { "src": "/api/(.*)", "dest": "/api/index.php" },
+    { "src": "/(.*)", "dest": "/api/index.php" }
   ]
 }
