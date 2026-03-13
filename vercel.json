@@ -1,12 +1,20 @@
 {
   "version": 2,
   "functions": {
-    "vercel-api/index.php": { "runtime": "vercel-php@0.7.1" }
+    "api/index.php": { "runtime": "vercel-php@0.7.1" }
   },
   "routes": [
     {
+      "src": "/api/tes-koneksi",
+      "dest": "/api/index.php"
+    },
+    {
+      "src": "/api/spareparts",
+      "dest": "/api/index.php"
+    },
+    {
       "src": "/(.*)",
-      "dest": "/vercel-api/index.php"
+      "dest": "/api/index.php"
     }
   ]
 }
